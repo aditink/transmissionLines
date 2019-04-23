@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 
 _FILENAME = '500pF-bindingport.csv'
 _INPUT = []
-_MAX_LINE = 200
+_MAX_LINE = 180
 
 _F_COL=0
 _X_COL=6
@@ -73,16 +73,24 @@ c=[]
 cerr=[]
 x=[]
 y=[]
-for start in range(2,50):
+y2=[]
+for start in range(25,70):
     for end in range(170, 171):
         params, err=analyze(start, end)
         print(start)
         print(params[0])
         x+=[start]
         y+=[params[0]]
+        y2+=[err[0]]
 
-plt.plot(x,y)
-plt.show()
+plt.plot(x,y,label="C")
+# plt.plot(x,y2,label=r"$\sigma$")
+plt.ylabel('value of best fit C')
+plt.xlabel('starting frequency point number')
+plt.title('Data cleaning: Start frequency')
+plt.legend()
+# plt.show()
+plt.savefig('500pFstartFrequency.png')
 # print(params)
 # perr = np.sqrt(np.diag(pcov))
 # print(perr)
