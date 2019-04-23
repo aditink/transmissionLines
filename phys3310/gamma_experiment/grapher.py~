@@ -1,0 +1,60 @@
+from matplotlib import pyplot as plt
+import csv
+
+_MU_G_COL=17
+
+_CU_START=2
+_CU_END=22
+
+_PB_START=0
+_PB_END=0
+
+_AL_START=0
+_AL_END=1
+
+_FILE = 'gamma1.csv'
+table=[]
+
+def read_file(file = _FILE):
+    global table
+    with open(file) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            table+=[row]
+            if line_count == 0:
+                print(f'Column names are {", ".join(row)}')
+                line_count += 1
+            else:
+                print(row)
+                line_count += 1
+            print(f'Processed {line_count} lines.')
+        return csv_reader
+
+read_file()
+
+#extract all mu_gross values for Cu
+def getReadings(start, end, col):
+    readings=[]
+    for i in range(2,22):
+        rdg = table[i][_MU_G_COL]
+        #rdg = if rdg == '' then 0 else float(rdg)
+        if (rdg!=''):
+            readings+=[float(rdg)]
+    return readings
+
+#plot the values
+def plotMu(readings, caption, x='x', y='y', show=True, filename='placeholder'):
+    plt.plot(readings[0::3], label="590-740kEv")
+    plt.plot(readings[1::3], label="600-740kEv")
+    plt.plot(readings[2::3], label="630-700kEv")
+    plt.legend()
+    plt.xlabel(x)
+    plt.ylabel(y)
+    plt.title(caption)
+    plt.show() if show else plt.savefig(filename)
+
+readings=getReadings(_AL_START, _AL_END, _MU_G_COL)
+plotMu(readings, 'copper coefficient- gross counts', 'reading number', 'coefficient', False, 'copper_grosscounts_sanitycheck.png')
+
+# print(readings)

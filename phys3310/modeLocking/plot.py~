@@ -1,0 +1,14 @@
+from matplotlib import pyplot as plt
+
+_x_list = []
+_y_list = []
+
+def plot(x_list, y_list):
+    plt.plot(x_list, y_list)
+    plt.savefig("plot.jpg")
+    plt.show()
+
+def generate_x(_max, dx):
+    return [i*dx for i in range(_max/dx)]
+
+def popu
