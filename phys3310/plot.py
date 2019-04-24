@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 _FILENAME = '500pF-bindingport.csv'
 _INPUT = []
 _MAX_LINE = 170
+_IMG_NAME = '500pFResiduals'
 
 _F_COL=0
 _X_COL=6
@@ -58,17 +59,27 @@ params, pcov = optimize.curve_fit(test_func,
     p0=[500e-12, 90e-9])
     #p0=None)
 
+def residual(x_data, p0, p1, y_data):
+    res=[]
+    for i in range(len(y_data)):
+        res+=[y_data[i]-test_func(x_data, params[0], params[1])[i]]
+    return res
+
 plt.figure(figsize=(6, 4))
-plt.ylabel(r'$|X_S|$')
-plt.xlabel('Frequency')
+plt.ylabel('residual(F)')
+plt.xlabel('Frequency(Hz)')
 plt.title('500pF capacitor fit')
-plt.scatter(x_data, y_data, label='Data')
-plt.plot(x_data, test_func(x_data, params[0], params[1]),
-         label='Fitted function', color='red')
+# plt.scatter(x_data, y_data, label='Data')
+# plt.plot(x_data, test_func(x_data, params[0], params[1]),
+        #  label='Fitted function', color='red')
+
+plt.plot(x_data, residual(x_data, params[0], params[1],y_data),
+         label='Residuals', color='red')
+
 
 plt.legend(loc='best')
 
-plt.savefig('500pFfit.png')
+plt.savefig(_IMG_NAME)
 
 # c=[]
 # cerr=[]
