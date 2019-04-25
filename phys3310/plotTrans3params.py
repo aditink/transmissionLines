@@ -5,10 +5,10 @@ from scipy import optimize
 from scipy import stats
 from matplotlib import pyplot as plt
 
-_FILENAME = 'rg-6u.csv'
+_FILENAME = 'long-rg6u.csv'
 _INPUT = []
 _MAX_LINE = -1
-_IMG_NAME = 'smallRg6u_3params_1'
+_IMG_NAME = 'longRg6u_3params_1'
 
 _F_COL=0
 _X_COL=7
@@ -40,7 +40,7 @@ def extract_col(input, col_num):
 
 # data fitting: referred to http://scipy-lectures.org/intro/scipy/auto_examples/plot_curve_fit.html
 def test_func(f, Z, F, c):
-    return [abs(Z/(math.tan(2*math.pi*_f/F + c))) for _f in f]
+    return [abs(Z/(math.tan(2*math.pi*_f/F))+c) for _f in f]
 
 def residual(x_data, params, y_data):
     res=[]
@@ -61,11 +61,11 @@ if (_fit):
     params, pcov = optimize.curve_fit(test_func, 
     x_data,
     y_data,
-    p0=[ 85.8792202, 1.06791415e08, 0])
+    p0=[ 60.8792202, 1.06791415e06, 0.1])
     #p0=None)
 
 if _calc_SE:
-    params=[ 85.8792202, 1.07557290e08, -0.03]
+    params=[ 85.8792202, 1.07557290e08, 0.03]
 
 if (_residual):
     plt.figure(figsize=(6, 4))

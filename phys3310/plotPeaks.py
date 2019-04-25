@@ -8,13 +8,14 @@ from matplotlib import pyplot as plt
 _FILENAME = 'long-rg6u.csv'
 _INPUT = []
 _MAX_LINE = -1
-_IMG_NAME = 'longRg6u_1'
+_IMG_NAME = 'longRg6u_peaks'
 
 _F_COL=0
 _X_COL=7
 
 def read_file(filename=_FILENAME, startline=5, endline=_MAX_LINE):
     """General csv reading"""
+    _IRAW=[]
     global _INPUT
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -22,13 +23,10 @@ def read_file(filename=_FILENAME, startline=5, endline=_MAX_LINE):
         for row in csv_reader:
             line_count += 1
             if line_count >= startline and (line_count <= endline or endline==-1):
-                if (float(row[_X_COL])<200):
-                    if(float(row[_F_COL])==158636875.0 or float(row[_F_COL])==158412000.0
-                    or float(row[_F_COL])==158187125.0 or float(row[_F_COL])==157962250.0): # bad point(s)
-                        # print(line_count)
-                        pass
-                    else:
-                        _INPUT += [row]
+                _IRAW += [row]
+    for i in range(len(_IRAW)-1):
+        if (float(_IRAW[i][_X_COL])>float(_IRAW[i-1][_X_COL]) and float(_IRAW[i][_X_COL])>float(_IRAW[i+1][_X_COL])):
+            _INPUT += [_IRAW[i]]
 
 
 def extract_col(input, col_num):
@@ -40,7 +38,7 @@ def extract_col(input, col_num):
 
 # data fitting: referred to http://scipy-lectures.org/intro/scipy/auto_examples/plot_curve_fit.html
 def test_func(f, Z, F):
-    return [abs(Z/(math.tan(2*math.pi*_f/F))) for _f in f]
+    return [(Z*_f)+F for _f in f] #y-mx+c where Z=m, c=F
 
 def residual(x_data, p0, p1, y_data):
     res=[]
@@ -74,6 +72,7 @@ if (_residual):
             label='Residual', color='red')
     plt.ylabel(r'Impedence($\Omega$)')
     plt.xlabel('Frequency(Hz)')
+    plt.title("Resonance peak amplitudes")
     plt.legend(loc='best')
     plt.savefig("{}_{}".format(_IMG_NAME,'residual.png'))
 
@@ -88,6 +87,7 @@ plt.plot(x_data, test_func(x_data, params[0], params[1]),
         label='Fitted function', color='red')
 plt.ylabel(r'Impedence($\Omega$)')
 plt.xlabel('Frequency(Hz)')
+plt.title("Resonance peak amplitudes")
 plt.legend(loc='best')
 plt.savefig("{}.png".format(_IMG_NAME))
 
